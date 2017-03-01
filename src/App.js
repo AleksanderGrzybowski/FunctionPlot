@@ -17,8 +17,18 @@ class App extends Component {
         };
     }
 
-    handleChange = (e) => {
+    handleExpressionChange = (e) => {
         this.setState({expression: e.target.value});
+    };
+
+    handleScroll = (e) => {
+        const fact = (e.deltaY > 0) ? 0.99 : (1/0.99);
+        this.setState({
+            xMin: this.state.xMin * fact,
+            xMax: this.state.xMax * fact,
+            yMin: this.state.yMin * fact,
+            yMax: this.state.yMax * fact,
+        });
     };
 
     render() {
@@ -82,8 +92,8 @@ class App extends Component {
         }
 
         return (
-            <div id="lol" onWheel={() => console.log('wheel !!!')}>
-                <input type="text" value={this.state.expression} onChange={this.handleChange}/>
+            <div onWheel={this.handleScroll}>
+                <input type="text" value={this.state.expression} onChange={this.handleExpressionChange}/>
                 <Stage width={this.props.width} height={this.props.height}>
                     <Layer>
                         {grid}

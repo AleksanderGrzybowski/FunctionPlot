@@ -3,6 +3,6 @@ import ReactDOM from 'react-dom';
 import App from './App';
 
 ReactDOM.render(
-    <App width={1000} height={500} gridLines={10} />,
+    <App width={600} height={600} gridLines={9} />,
     document.getElementById('root')
 );

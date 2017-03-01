@@ -1,4 +1,4 @@
-import { mapXToCanvasCoords, mapYToCanvasCoords } from '../plot';
+import { mapXToCanvasCoords, mapYToCanvasCoords, gridLines } from '../plot';
 
 test('should map x coords to canvas coords', () => {
     (ctx => {
@@ -64,4 +64,11 @@ test('should map y coords to canvas coords', () => {
         yMin: -10,
         yMax: 20
     });
+});
+
+
+test('should split axis into given number of segments', () => {
+    expect(gridLines(1, 3, 1)).toEqual([2]);
+    expect(gridLines(1, 4, 2)).toEqual([2, 3]);
+    expect(gridLines(1, 9, 3)).toEqual([3, 5, 7]);
 });

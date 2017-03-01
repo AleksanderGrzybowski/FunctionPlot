@@ -2,13 +2,18 @@ import React, { Component } from 'react';
 
 import { Layer, Stage, Line } from 'react-konva';
 import math from 'mathjs';
+import { gridLines, mapXToCanvasCoords, mapYToCanvasCoords } from './plot';
 
 class App extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            expression: 'sin(x)'
+            expression: 'sin(x)',
+            xMin: -5,
+            xMax: 5,
+            yMin: -5,
+            yMax: 5
         };
     }
 
@@ -18,16 +23,23 @@ class App extends Component {
 
     render() {
         const size = 500;
-        let lines = [];
-        for (let i = 0; i < size; i += size / 10) {
-            lines.push(<Line points={[i, 1, i, size]} stroke="red"/>)
-        }
+        const grid = [
+            ...gridLines(this.state.xMin, this.state.xMax, 10)
+                .map(
+                    x => mapXToCanvasCoords({
+                        width: 500, xMin: this.state.xMin, xMax: this.state.xMax
+                    }, x))
+                .map(position => <Line points={[position, 0, position, size]} stroke="gray"/>)
+            ,
+            ...gridLines(this.state.yMin, this.state.yMax, 10)
+                .map(
+                    y => mapYToCanvasCoords({
+                        height: 500, yMin: this.state.yMin, yMax: this.state.yMax
+                    }, y))
+                .map(position => <Line points={[1, position, size, position]} stroke="gray"/>)
+        ];
 
-        for (let i = 0; i < size; i += size / 10) {
-            lines.push(<Line points={[1, i, size, i]} stroke="red"/>)
-        }
-
-        let axis = [
+        let axes = [
             <Line points={[1, size / 2, size, size / 2]} stroke="black"/>,
             <Line points={[size / 2, 1, size / 2, size]} stroke="black"/>
         ];
@@ -52,8 +64,8 @@ class App extends Component {
                 <input type="text" value={this.state.expression} onChange={this.handleChange}/>
                 <Stage width={size} height={size}>
                     <Layer>
-                        {lines}
-                        {axis}
+                        {grid}
+                        {axes}
                         <Line points={plot} stroke="blue"/>
                     </Layer>
                 </Stage>

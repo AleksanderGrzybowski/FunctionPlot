@@ -1,0 +1,7 @@
+{
+  "name": "function-plot",
+  "dependencies": {},
+  "globalDependencies": {
+    "jest": "registry:dt/jest#18.1.0+20170131225342"
+  }
+}

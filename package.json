@@ -1,0 +1,23 @@
+{
+  "name": "function-plot",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "konva": "^1.4.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-konva": "^1.1.1"
+  },
+  "devDependencies": {
+    "babel-jest": "^19.0.0",
+    "jest": "^19.0.2",
+    "react-scripts": "0.9.3",
+    "typings": "^2.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "jest",
+    "eject": "react-scripts eject"
+  }
+}

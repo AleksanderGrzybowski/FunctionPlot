@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Layer, Stage, Line } from 'react-konva';
+import { Layer, Stage, Line, Group, Text } from 'react-konva';
 import math from 'mathjs';
 import { gridLines, mapXToCanvasCoords, mapYToCanvasCoords } from './plot';
 
@@ -28,14 +28,26 @@ class App extends Component {
         };
         const grid = [
             ...gridLines(this.state.xMin, this.state.xMax, this.props.gridLines)
-                .map(
-                    x => mapXToCanvasCoords(ctx, x))
-                .map(position => <Line points={[position, 0, position, this.props.height]} stroke="gray"/>)
+                .map(x => {
+                    const position = mapXToCanvasCoords(ctx, x);
+                    return (
+                        <Group>
+                            <Line points={[position, 0, position, this.props.height]} stroke="gray"/>
+                            <Text x={position - 10} y={mapYToCanvasCoords(ctx, 0)} text={x.toFixed(2)}/>
+                        </Group>
+                    );
+                })
             ,
             ...gridLines(this.state.yMin, this.state.yMax, this.props.gridLines)
-                .map(
-                    y => mapYToCanvasCoords(ctx, y))
-                .map(position => <Line points={[0, position, this.props.width, position]} stroke="gray"/>)
+                .map(y => {
+                    const position = mapYToCanvasCoords(ctx, y);
+                    return (
+                        <Group>
+                            <Line points={[0, position, this.props.width, position]} stroke="gray"/>
+                            <Text x={mapXToCanvasCoords(ctx, 0)} y={position} text={y.toFixed(2)}/>
+                        </Group>
+                    )
+                })
         ];
 
         const axes = [

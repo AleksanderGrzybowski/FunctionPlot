@@ -11,7 +11,7 @@ class App extends Component {
         this.state = {
             expression: 'sin(x)',
             xMin: -5,
-            xMax: 5,
+            xMax: 10,
             yMin: -5,
             yMax: 5
         };
@@ -22,47 +22,57 @@ class App extends Component {
     };
 
     render() {
-        const size = 500;
+        const ctx = {
+            width: this.props.width, xMin: this.state.xMin, xMax: this.state.xMax,
+            height: this.props.height, yMin: this.state.yMin, yMax: this.state.yMax
+        };
         const grid = [
-            ...gridLines(this.state.xMin, this.state.xMax, 10)
+            ...gridLines(this.state.xMin, this.state.xMax, this.props.gridLines)
                 .map(
-                    x => mapXToCanvasCoords({
-                        width: 500, xMin: this.state.xMin, xMax: this.state.xMax
-                    }, x))
-                .map(position => <Line points={[position, 0, position, size]} stroke="gray"/>)
+                    x => mapXToCanvasCoords(ctx, x))
+                .map(position => <Line points={[position, 0, position, this.props.height]} stroke="gray"/>)
             ,
-            ...gridLines(this.state.yMin, this.state.yMax, 10)
+            ...gridLines(this.state.yMin, this.state.yMax, this.props.gridLines)
                 .map(
-                    y => mapYToCanvasCoords({
-                        height: 500, yMin: this.state.yMin, yMax: this.state.yMax
-                    }, y))
-                .map(position => <Line points={[1, position, size, position]} stroke="gray"/>)
+                    y => mapYToCanvasCoords(ctx, y))
+                .map(position => <Line points={[0, position, this.props.width, position]} stroke="gray"/>)
         ];
 
-        let axes = [
-            <Line points={[1, size / 2, size, size / 2]} stroke="black"/>,
-            <Line points={[size / 2, 1, size / 2, size]} stroke="black"/>
+        const axes = [
+            <Line points={[
+                0,
+                mapYToCanvasCoords(ctx, 0),
+                this.props.width,
+                mapYToCanvasCoords(ctx, 0)
+            ]}
+                  stroke="black"
+            />,
+            <Line points={[
+                mapXToCanvasCoords(ctx, 0),
+                0,
+                mapXToCanvasCoords(ctx, 0),
+                this.props.height
+            ]}
+                  stroke="black"
+            />
         ];
-
-        const mapCoordX = x => size / 2 + x * 50;
-        const mapCoordY = x => size / 2 - x * 50;
 
         let plot = [];
-        for (let x = -5; x < 5; x += 0.01) {
-            let x2;
+        for (let x = this.state.xMin; x < this.state.xMax; x += (this.state.xMax - this.state.xMin) / 100) {
+            let y;
             try {
-                x2 = math.eval(this.state.expression, {x});
+                y = math.eval(this.state.expression, {x});
             } catch (e) {
-                x2 = 0;
+                y = 0;
             }
 
-            plot = [...plot, mapCoordX(x), mapCoordY(x2)];
+            plot = [...plot, mapXToCanvasCoords(ctx, x), mapYToCanvasCoords(ctx, y)];
         }
 
         return (
             <div id="lol" onWheel={() => console.log('wheel !!!')}>
                 <input type="text" value={this.state.expression} onChange={this.handleChange}/>
-                <Stage width={size} height={size}>
+                <Stage width={this.props.width} height={this.props.height}>
                     <Layer>
                         {grid}
                         {axes}

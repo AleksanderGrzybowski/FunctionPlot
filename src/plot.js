@@ -47,13 +47,17 @@ export function zoom({xMin, xMax, yMin, yMax, anchorX, anchorY, scale}) {
     };
 
     // move centered rectangle relative to anchorX/Y
+    // depending on direction of zooming, we need to move
+    // rectangle left or right, up or down
+    let moveCoeff = (scale > 1 ? 1 : -1);
+
     const xDiff = anchorX - (xMax + xMin) / 2;
-    zoomRect.xMin += xDiff / 2;
-    zoomRect.xMax += xDiff / 2;
+    zoomRect.xMin += moveCoeff * xDiff / 2;
+    zoomRect.xMax += moveCoeff * xDiff / 2;
 
     const yDiff = anchorY - (yMax + yMin) / 2;
-    zoomRect.yMin += yDiff / 2;
-    zoomRect.yMax += yDiff / 2;
+    zoomRect.yMin += moveCoeff * yDiff / 2;
+    zoomRect.yMax += moveCoeff * yDiff / 2;
 
     return zoomRect;
 }

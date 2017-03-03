@@ -126,19 +126,22 @@ export default class App extends Component {
     }
 
     plotControls() {
-        const controlsStyle = {
+        const style = {
             position: 'fixed',
-            bottom: 0,
-            right: 0,
+            top: 0,
+            left: 0,
             zIndex: 2,
-            width: 200,
-            height: 100,
-            backgroundColor: 'lightblue'
+            borderRadius: 10,
+            fontSize: '16pt'
         };
+        
         return (
-            <div style={controlsStyle}>
-                <input type="text" value={this.state.expression} onChange={this.handleExpressionChange}/>
-            </div>
+            <input
+                style={style}
+                type="text"
+                value={this.state.expression}
+                onChange={this.handleExpressionChange}
+            />
         )
     }
 

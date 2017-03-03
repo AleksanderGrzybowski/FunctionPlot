@@ -74,8 +74,8 @@ export default class App extends Component {
         const y = mapYToCanvasCoords(ctx, 0);
 
         return [
-            <Line points={[0, y, this.props.width, y]} stroke="black"/>,
-            <Line points={[x, 0, x, this.props.height]} stroke="black"/>
+            <Line key={1} points={[0, y, this.props.width, y]} stroke="black"/>,
+            <Line key={2} points={[x, 0, x, this.props.height]} stroke="black"/>
         ];
     }
 
@@ -92,7 +92,8 @@ export default class App extends Component {
                 .map(x => {
                     const position = mapXToCanvasCoords(ctx, x);
                     return (
-                        <Group>
+                        // ugly hack to ensure unique values
+                        <Group key={(x + 57) * 13}>
                             <Line points={[position, 0, position, this.props.height]} {...lineStyle}/>
                             <Text x={position - 10} y={mapYToCanvasCoords(ctx, 0)} text={x.toFixed(2)}/>
                         </Group>
@@ -102,7 +103,7 @@ export default class App extends Component {
                 .map(y => {
                     const position = mapYToCanvasCoords(ctx, y);
                     return (
-                        <Group>
+                        <Group key={y}>
                             <Line points={[0, position, this.props.width, position]} {...lineStyle}/>
                             <Text x={mapXToCanvasCoords(ctx, 0)} y={position - 5} text={y.toFixed(2)}/>
                         </Group>
@@ -134,7 +135,7 @@ export default class App extends Component {
             borderRadius: 10,
             fontSize: '16pt'
         };
-        
+
         return (
             <input
                 style={style}

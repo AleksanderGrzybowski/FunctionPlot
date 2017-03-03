@@ -1,3 +1,5 @@
+// those mapping functions are inverses of each other
+
 export function mapXToCanvasCoords({width, xMin, xMax}, x) {
     return Math.round(((x - xMin) / (xMax - xMin)) * width);
 }

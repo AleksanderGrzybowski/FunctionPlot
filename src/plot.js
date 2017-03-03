@@ -1,5 +1,5 @@
 export function mapXToCanvasCoords({width, xMin, xMax}, x) {
-    return ((x - xMin) / (xMax - xMin)) * width;
+    return Math.round(((x - xMin) / (xMax - xMin)) * width);
 }
 
 export function mapXToFunctionCoords({width, xMin, xMax}, x) {
@@ -7,7 +7,7 @@ export function mapXToFunctionCoords({width, xMin, xMax}, x) {
 }
 
 export function mapYToCanvasCoords({height, yMin, yMax}, y) {
-    return height - ((y - yMin) / (yMax - yMin)) * height;
+    return Math.round(height - ((y - yMin) / (yMax - yMin)) * height);
 }
 
 export function mapYToFunctionCoords({height, yMin, yMax}, y) {

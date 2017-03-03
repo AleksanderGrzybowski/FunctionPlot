@@ -16,11 +16,18 @@ class App extends Component {
         super(props);
 
         this.state = {
-            expression: 'sin(x)',
-            xMin: -10,
-            xMax: 10,
-            yMin: -10,
-            yMax: 10
+            expression: this.props.initialExpression,
+            xMin: this.props.initialXrange[0],
+            xMax: this.props.initialXrange[1],
+            yMin: this.props.initialYrange[0],
+            yMax: this.props.initialYrange[1],
+        };
+    }
+
+    getCtx() {
+        return {
+            width: this.props.width, xMin: this.state.xMin, xMax: this.state.xMax,
+            height: this.props.height, yMin: this.state.yMin, yMax: this.state.yMax
         };
     }
 
@@ -29,10 +36,8 @@ class App extends Component {
     };
 
     handleScroll = (e) => {
-        const ctx = {
-            width: this.props.width, xMin: this.state.xMin, xMax: this.state.xMax,
-            height: this.props.height, yMin: this.state.yMin, yMax: this.state.yMax
-        };
+        const ctx = this.getCtx();
+
         this.setState(zoom({
             xMin: this.state.xMin,
             xMax: this.state.xMax,
@@ -40,14 +45,15 @@ class App extends Component {
             yMax: this.state.yMax,
             anchorX: mapXToFunctionCoords(ctx, e.evt.offsetX),
             anchorY: mapYToFunctionCoords(ctx, e.evt.offsetY),
-            scale: (e.evt.deltaY < 0) ? 1.1 : (1 / 1.1)
+            scale: (e.evt.deltaY < 0) ? this.props.zoomingScale : (1 / this.props.zoomingScale)
         }));
     };
 
     render() {
-        const ctx = {
-            width: this.props.width, xMin: this.state.xMin, xMax: this.state.xMax,
-            height: this.props.height, yMin: this.state.yMin, yMax: this.state.yMax
+        const ctx = this.getCtx();
+        const lineStyle = {
+            stroke: "gray",
+            strokeWidth: 1
         };
         const grid = [
             ...gridLines(this.state.xMin, this.state.xMax)
@@ -55,7 +61,7 @@ class App extends Component {
                     const position = mapXToCanvasCoords(ctx, x);
                     return (
                         <Group>
-                            <Line points={[position, 0, position, this.props.height]} stroke="gray"/>
+                            <Line points={[position, 0, position, this.props.height]} {...lineStyle}/>
                             <Text x={position - 10} y={mapYToCanvasCoords(ctx, 0)} text={x.toFixed(2)}/>
                         </Group>
                     );
@@ -66,8 +72,8 @@ class App extends Component {
                     const position = mapYToCanvasCoords(ctx, y);
                     return (
                         <Group>
-                            <Line points={[0, position, this.props.width, position]} stroke="gray"/>
-                            <Text x={mapXToCanvasCoords(ctx, 0)} y={position} text={y.toFixed(2)}/>
+                            <Line points={[0, position, this.props.width, position]} {...lineStyle}/>
+                            <Text x={mapXToCanvasCoords(ctx, 0)} y={position - 5} text={y.toFixed(2)}/>
                         </Group>
                     )
                 })
@@ -93,7 +99,7 @@ class App extends Component {
         ];
 
         let plot = [];
-        for (let x = this.state.xMin; x < this.state.xMax; x += (this.state.xMax - this.state.xMin) / 100) {
+        for (let x = this.state.xMin; x < this.state.xMax; x += (this.state.xMax - this.state.xMin) / this.props.numberOfPoints) {
             let y;
             try {
                 y = math.eval(this.state.expression, {x});
@@ -114,9 +120,21 @@ class App extends Component {
             opacity={0}
         />;
 
+        const controlsStyle = {
+            position: 'fixed',
+            bottom: 0,
+            right: 0,
+            zIndex: 2,
+            width: 200,
+            height: 100,
+            backgroundColor: 'lightblue'
+        };
+
         return (
             <div>
-                <input type="text" value={this.state.expression} onChange={this.handleExpressionChange}/>
+                <div style={controlsStyle}>
+                    <input type="text" value={this.state.expression} onChange={this.handleExpressionChange}/>
+                </div>
                 <Stage width={this.props.width} height={this.props.height} onWheel={this.handleScroll}>
                     <Layer>
                         {grid}
@@ -128,7 +146,6 @@ class App extends Component {
             </div>
         )
     }
-
 }
 
 export default App;

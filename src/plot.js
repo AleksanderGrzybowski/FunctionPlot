@@ -14,15 +14,18 @@ export function mapYToFunctionCoords({height, yMin, yMax}, y) {
     return (height - y) * (yMax - yMin) / height + yMin;
 }
 
+// this is mostly trial-and-error
+export function gridLines(min, max) {
+    const delta = (max - min) / 3;
 
-export function gridLines(min, max, numberOfLines) {
-    const dx = (max - min) / (numberOfLines + 1);
-    let left = min + dx;
+    //http://stackoverflow.com/questions/22491505/how-to-round-down-to-the-nearest-power-of-10
+    const space = Math.pow(10, Math.floor(Math.log10(delta)));
+
     const arr = [];
-
-    for (let i = 0; i < numberOfLines; ++i) {
-        arr.push(left);
-        left += dx;
+    for (let left = Math.round(min / space) * space; left < Math.round(max / space) * space; left += space) {
+        if (left > min && left < max) {
+            arr.push(left);
+        }
     }
 
     return arr;

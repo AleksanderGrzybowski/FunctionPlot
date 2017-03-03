@@ -3,7 +3,6 @@ import {
     mapYToCanvasCoords,
     mapXToFunctionCoords,
     mapYToFunctionCoords,
-    gridLines,
     zoom
 } from '../plot';
 
@@ -96,13 +95,6 @@ test('should map y canvas coords to function coords', () => {
         yMin: 0,
         yMax: 10
     });
-});
-
-
-test('should split axis into given number of segments', () => {
-    expect(gridLines(1, 3, 1)).toEqual([2]);
-    expect(gridLines(1, 4, 2)).toEqual([2, 3]);
-    expect(gridLines(1, 9, 3)).toEqual([3, 5, 7]);
 });
 
 test('should zoom - cursor on the center', () => {

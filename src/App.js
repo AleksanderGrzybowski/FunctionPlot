@@ -50,7 +50,7 @@ class App extends Component {
             height: this.props.height, yMin: this.state.yMin, yMax: this.state.yMax
         };
         const grid = [
-            ...gridLines(this.state.xMin, this.state.xMax, this.props.gridLines)
+            ...gridLines(this.state.xMin, this.state.xMax)
                 .map(x => {
                     const position = mapXToCanvasCoords(ctx, x);
                     return (
@@ -61,7 +61,7 @@ class App extends Component {
                     );
                 })
             ,
-            ...gridLines(this.state.yMin, this.state.yMax, this.props.gridLines)
+            ...gridLines(this.state.yMin, this.state.yMax)
                 .map(y => {
                     const position = mapYToCanvasCoords(ctx, y);
                     return (

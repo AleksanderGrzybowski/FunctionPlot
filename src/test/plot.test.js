@@ -1,4 +1,11 @@
-import { mapXToCanvasCoords, mapYToCanvasCoords, gridLines } from '../plot';
+import {
+    mapXToCanvasCoords,
+    mapYToCanvasCoords,
+    mapXToFunctionCoords,
+    mapYToFunctionCoords,
+    gridLines,
+    zoom
+} from '../plot';
 
 test('should map x coords to canvas coords', () => {
     (ctx => {
@@ -66,9 +73,74 @@ test('should map y coords to canvas coords', () => {
     });
 });
 
+test('should map x canvas coords to function coords', () => {
+    (ctx => {
+        expect(mapXToFunctionCoords(ctx, 0)).toBeCloseTo(0);
+        expect(mapXToFunctionCoords(ctx, 10)).toBeCloseTo(1);
+        expect(mapXToFunctionCoords(ctx, 50)).toBeCloseTo(5);
+        expect(mapXToFunctionCoords(ctx, 100)).toBeCloseTo(10);
+    })({
+        width: 100,
+        xMin: 0,
+        xMax: 10
+    });
+});
+
+test('should map y canvas coords to function coords', () => {
+    (ctx => {
+        expect(mapYToFunctionCoords(ctx, 0)).toBeCloseTo(10);
+        expect(mapYToFunctionCoords(ctx, 50)).toBeCloseTo(5);
+        expect(mapYToFunctionCoords(ctx, 100)).toBeCloseTo(0);
+    })({
+        height: 100,
+        yMin: 0,
+        yMax: 10
+    });
+});
+
 
 test('should split axis into given number of segments', () => {
     expect(gridLines(1, 3, 1)).toEqual([2]);
     expect(gridLines(1, 4, 2)).toEqual([2, 3]);
     expect(gridLines(1, 9, 3)).toEqual([3, 5, 7]);
+});
+
+test('should zoom - cursor on the center', () => {
+    expect(zoom(
+        {xMin: 0, xMax: 4, yMin: 0, yMax: 4, anchorX: 2, anchorY: 2, scale: 2}
+    )).toEqual(
+        {xMin: 1, xMax: 3, yMin: 1, yMax: 3}
+    );
+});
+
+test('should zoom - cursor on the far left', () => {
+    expect(zoom(
+        {xMin: 0, xMax: 4, yMin: 0, yMax: 4, anchorX: 0, anchorY: 2, scale: 2}
+    )).toEqual(
+        {xMin: 0, xMax: 2, yMin: 1, yMax: 3}
+    );
+});
+
+test('should zoom - cursor on the far right', () => {
+    expect(zoom(
+        {xMin: 0, xMax: 4, yMin: 0, yMax: 4, anchorX: 4, anchorY: 2, scale: 2}
+    )).toEqual(
+        {xMin: 2, xMax: 4, yMin: 1, yMax: 3}
+    );
+});
+
+test('should zoom - cursor on the far bottom', () => {
+    expect(zoom(
+        {xMin: 0, xMax: 4, yMin: 0, yMax: 4, anchorX: 2, anchorY: 0, scale: 2}
+    )).toEqual(
+        {xMin: 1, xMax: 3, yMin: 0, yMax: 2}
+    );
+});
+
+test('should zoom - cursor on the far top', () => {
+    expect(zoom(
+        {xMin: 0, xMax: 4, yMin: 0, yMax: 4, anchorX: 2, anchorY: 4, scale: 2}
+    )).toEqual(
+        {xMin: 1, xMax: 3, yMin: 2, yMax: 4}
+    );
 });

@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 
-import { Layer, Stage, Line, Group, Text } from 'react-konva';
+import { Layer, Stage, Line, Group, Text, Rect } from 'react-konva';
 import math from 'mathjs';
-import { gridLines, mapXToCanvasCoords, mapYToCanvasCoords } from './plot';
+import {
+    gridLines,
+    mapXToCanvasCoords,
+    mapYToCanvasCoords,
+    mapXToFunctionCoords,
+    mapYToFunctionCoords,
+    zoom
+} from './plot';
 
 class App extends Component {
     constructor(props) {
@@ -10,10 +17,10 @@ class App extends Component {
 
         this.state = {
             expression: 'sin(x)',
-            xMin: -5,
+            xMin: -10,
             xMax: 10,
-            yMin: -5,
-            yMax: 5
+            yMin: -10,
+            yMax: 10
         };
     }
 
@@ -22,13 +29,19 @@ class App extends Component {
     };
 
     handleScroll = (e) => {
-        const fact = (e.deltaY > 0) ? 0.99 : (1/0.99);
-        this.setState({
-            xMin: this.state.xMin * fact,
-            xMax: this.state.xMax * fact,
-            yMin: this.state.yMin * fact,
-            yMax: this.state.yMax * fact,
-        });
+        const ctx = {
+            width: this.props.width, xMin: this.state.xMin, xMax: this.state.xMax,
+            height: this.props.height, yMin: this.state.yMin, yMax: this.state.yMax
+        };
+        this.setState(zoom({
+            xMin: this.state.xMin,
+            xMax: this.state.xMax,
+            yMin: this.state.yMin,
+            yMax: this.state.yMax,
+            anchorX: mapXToFunctionCoords(ctx, e.evt.offsetX),
+            anchorY: mapYToFunctionCoords(ctx, e.evt.offsetY),
+            scale: 2
+        }));
     };
 
     render() {
@@ -91,14 +104,25 @@ class App extends Component {
             plot = [...plot, mapXToCanvasCoords(ctx, x), mapYToCanvasCoords(ctx, y)];
         }
 
+        // Mouse events can only occur on elements, so this is needed.
+        const scrollHack = <Rect
+            x={0}
+            y={0}
+            width={this.props.width}
+            height={this.props.height}
+            fill="red"
+            opacity={0}
+        />;
+
         return (
-            <div onWheel={this.handleScroll}>
+            <div>
                 <input type="text" value={this.state.expression} onChange={this.handleExpressionChange}/>
-                <Stage width={this.props.width} height={this.props.height}>
+                <Stage width={this.props.width} height={this.props.height} onWheel={this.handleScroll}>
                     <Layer>
                         {grid}
                         {axes}
                         <Line points={plot} stroke="blue"/>
+                        {scrollHack}
                     </Layer>
                 </Stage>
             </div>

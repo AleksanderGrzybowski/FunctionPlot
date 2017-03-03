@@ -40,7 +40,7 @@ class App extends Component {
             yMax: this.state.yMax,
             anchorX: mapXToFunctionCoords(ctx, e.evt.offsetX),
             anchorY: mapYToFunctionCoords(ctx, e.evt.offsetY),
-            scale: 2
+            scale: (e.evt.deltaY < 0) ? 1.1 : (1 / 1.1)
         }));
     };
 

@@ -35,7 +35,7 @@ export function gridLines(min, max) {
 
 export function zoom({xMin, xMax, yMin, yMax, anchorX, anchorY, scale}) {
     // put the zoomed area reactangle right on the center of the view
-    // rectangle is represented by its bottom-left corner
+    // rectangle is represented by its bottom-left corner and width/height
     // zooming 2x means the size of the zooming rectangle is 1/2 the size of view
 
     const width = xMax - xMin;
@@ -54,7 +54,7 @@ export function zoom({xMin, xMax, yMin, yMax, anchorX, anchorY, scale}) {
     // move centered rectangle relative to anchorX/Y
     // depending on direction of zooming, we need to move
     // rectangle left or right, up or down
-    let moveCoeff = (scale > 1 ? 1 : -1);
+    const moveCoeff = (scale > 1) ? 1 : -1;
 
     const xDiff = anchorX - (xMax + xMin) / 2;
     zoomRect.xMin += moveCoeff * xDiff / 2;
